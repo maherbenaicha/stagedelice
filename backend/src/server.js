@@ -29,6 +29,8 @@ app.use('/api/tests', require('./routes/tests'));
 app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/job-offers', require('./routes/jobOffers'));
+app.use('/api/talent', require('./routes/talent'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'OK', time: new Date() }));
 app.use((err, req, res, next) => {
