@@ -1,10 +1,10 @@
 /**
- * geminiService.js (utilise Groq à la place de Gemini)
+ * geminiService.js (utilise Groq)
  * Génère des QCM techniques via l'API Groq (100% gratuit).
  * Modèle : llama-3.3-70b-versatile
  *
  * Variable d'environnement requise :
- *   GROQ_API_KEY  — clé gratuite sur https://console.groq.com
+ *   GROQ_API_KEY  — votre clé Groq dans le fichier .env
  */
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -39,11 +39,11 @@ async function generateQuestions({ technology, level = 'moyen', count = 5 }) {
     throw new Error('Le paramètre "technology" est requis');
   }
 
+  // La clé Groq est stockée sous GROQ_API_KEY dans le .env
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new Error(
-      'GROQ_API_KEY manquante. Obtenez une clé gratuite sur https://console.groq.com ' +
-      'puis ajoutez GROQ_API_KEY=votre_cle dans votre fichier .env'
+      'GROQ_API_KEY manquante. Ajoutez votre clé Groq dans le fichier .env sous GROQ_API_KEY'
     );
   }
 
