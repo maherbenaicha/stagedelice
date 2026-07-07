@@ -1,35 +1,28 @@
 /**
- * geminiService.js
- * -----------------------------------------------------------------------
- * Thin wrapper around Google's Gemini API used to auto-generate
- * multiple-choice questions (QCM) for a given technology / difficulty.
+ * geminiService.js (utilise Groq à la place de Gemini)
+ * Génère des QCM techniques via l'API Groq (100% gratuit).
+ * Modèle : llama-3.3-70b-versatile
  *
- * The service always returns an array of question objects shaped exactly
- * like the `Questions` table expects, so callers (aiController) can insert
- * the result directly with no further transformation:
- *
- *   { text, options: string[], correct_answer: number, difficulty, points }
- * -----------------------------------------------------------------------
+ * Variable d'environnement requise :
+ *   GROQ_API_KEY  — clé gratuite sur https://console.groq.com
  */
 
-const MODEL = 'gemini-1.5-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL = 'llama-3.3-70b-versatile';
 
-/**
- * Builds the French-language prompt sent to Gemini.
- */
 function buildPrompt({ technology, level, count }) {
   return `Tu es un expert technique qui prépare des questions d'entretien.
 Génère exactement ${count} questions à choix multiples (QCM) en français sur la technologie "${technology}",
 de niveau de difficulté "${level}" (facile, moyen ou difficile).
 
-Règles strictes :
+Règles STRICTES :
 - Réponds UNIQUEMENT avec un tableau JSON valide, sans texte avant ou après, sans balises markdown.
-- Chaque question doit avoir exactement 4 options.
+- Chaque question doit avoir exactement 4 options réalistes et distinctes.
 - "correct_answer" est l'index (0 à 3) de la bonne réponse dans le tableau "options".
+- Les questions doivent être précises, techniques et liées à la vraie pratique de ${technology}.
 - Varie les sujets abordés pour couvrir plusieurs aspects de la technologie.
 
-Format exact attendu :
+Format exact attendu (JSON pur, rien d'autre) :
 [
   {
     "text": "Enoncé de la question",
@@ -41,73 +34,50 @@ Format exact attendu :
 ]`;
 }
 
-/**
- * Mock generator used as a safe fallback during local development
- * (when GEMINI_API_KEY is missing or the API returns an error).
- */
-function generateMockQuestions(technology, level, count) {
-  const sampleOptions = [
-    ['Option A', 'Option B', 'Option C', 'Option D'],
-    ['Réponse 1', 'Réponse 2', 'Réponse 3', 'Réponse 4'],
-    ['Vrai', 'Faux', 'Parfois', 'Jamais'],
-  ];
-  const questions = [];
-  for (let i = 0; i < count; i++) {
-    const opts = sampleOptions[i % sampleOptions.length];
-    questions.push({
-      text: `(${level}) Question factice ${i + 1} sur ${technology}`,
-      options: opts,
-      correct_answer: i % 4,
-      difficulty: level,
-      points: 1,
-    });
-  }
-  return questions;
-}
-
-/**
- * Calls Gemini and returns a parsed array of question objects.
- * Falls back to mock questions if the API key is missing or the request fails.
- */
 async function generateQuestions({ technology, level = 'moyen', count = 5 }) {
-  const apiKey = process.env.GEMINI_API_KEY;
-
   if (!technology) {
     throw new Error('Le paramètre "technology" est requis');
   }
 
-  // Fallback to mock if no API key configured
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    console.warn('GEMINI_API_KEY manquante — utilisation des questions factices');
-    return generateMockQuestions(technology, level, count);
+    throw new Error(
+      'GROQ_API_KEY manquante. Obtenez une clé gratuite sur https://console.groq.com ' +
+      'puis ajoutez GROQ_API_KEY=votre_cle dans votre fichier .env'
+    );
   }
 
   const prompt = buildPrompt({ technology, level, count });
 
-  const response = await fetch(`${API_URL}?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        responseMimeType: 'application/json',
+  let response;
+  try {
+    response = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
-    }),
-  });
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 4096,
+      }),
+    });
+  } catch (networkErr) {
+    throw new Error(`Impossible de joindre l'API Groq : ${networkErr.message}`);
+  }
 
   if (!response.ok) {
     const errText = await response.text();
-    // Fallback to mock for any API error (404 model not found, 400 bad key, 429 quota, etc.)
-    console.warn(`Gemini API error (${response.status}), returning mock questions. Details:`, errText);
-    return generateMockQuestions(technology, level, count);
+    throw new Error(`Erreur API Groq (${response.status}): ${errText}`);
   }
 
   const data = await response.json();
-  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const rawText = data?.choices?.[0]?.message?.content;
+
   if (!rawText) {
-    console.warn('Réponse Gemini vide ou inattendue — utilisation des questions factices');
-    return generateMockQuestions(technology, level, count);
+    throw new Error('Réponse Groq vide ou inattendue : ' + JSON.stringify(data));
   }
 
   let questions;
@@ -115,17 +85,16 @@ async function generateQuestions({ technology, level = 'moyen', count = 5 }) {
     const cleaned = rawText.replace(/```json|```/g, '').trim();
     questions = JSON.parse(cleaned);
   } catch (e) {
-    console.warn('Impossible de parser la réponse JSON de Gemini — utilisation des questions factices');
-    return generateMockQuestions(technology, level, count);
+    throw new Error(
+      `Impossible de parser la réponse JSON de Groq : ${e.message}\n\nRéponse brute : ${rawText.slice(0, 300)}`
+    );
   }
 
   if (!Array.isArray(questions) || questions.length === 0) {
-    console.warn('Gemini n\'a retourné aucune question exploitable — utilisation des questions factices');
-    return generateMockQuestions(technology, level, count);
+    throw new Error("Groq n'a retourné aucune question exploitable");
   }
 
-  // Defensive normalization in case the model drifts slightly from spec
-  return questions
+  const normalized = questions
     .map((q) => ({
       text: String(q.text || '').trim(),
       options: Array.isArray(q.options) ? q.options.map(String) : [],
@@ -134,6 +103,12 @@ async function generateQuestions({ technology, level = 'moyen', count = 5 }) {
       points: Number.isInteger(q.points) ? q.points : 1,
     }))
     .filter((q) => q.text && q.options.length === 4);
+
+  if (normalized.length === 0) {
+    throw new Error('Aucune question valide après normalisation');
+  }
+
+  return normalized;
 }
 
 module.exports = { generateQuestions };
