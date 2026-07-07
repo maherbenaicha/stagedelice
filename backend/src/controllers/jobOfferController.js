@@ -4,6 +4,19 @@ const {
   generateRecruitmentPipeline,
 } = require('../services/geminiService');
 
+/**
+ * L'IA (Groq) renvoie parfois un champ texte sous forme de tableau
+ * (ex: missions: ["...", "..."]) au lieu d'une chaîne, ce qui casse
+ * l'insertion SQL (NVarChar attend une string). On normalise toujours
+ * ces champs en texte avant de les utiliser, qu'ils viennent de l'IA
+ * ou directement du formulaire du recruteur.
+ */
+function toText(value) {
+  if (Array.isArray(value)) return value.join('\n');
+  if (value === null || value === undefined) return '';
+  return String(value);
+}
+
 exports.getOffers = async (req, res) => {
   try {
     const pool = await getPool();
@@ -72,12 +85,12 @@ exports.createOffer = async (req, res) => {
       .input('title', sql.NVarChar, title)
       .input('position', sql.NVarChar, position)
       .input('level', sql.NVarChar, level || '')
-      .input('technologies', sql.NVarChar(sql.MAX), technologies || '')
-      .input('description', sql.NVarChar(sql.MAX), description || '')
-      .input('missions', sql.NVarChar(sql.MAX), missions || '')
-      .input('responsibilities', sql.NVarChar(sql.MAX), responsibilities || '')
+      .input('technologies', sql.NVarChar(sql.MAX), toText(technologies))
+      .input('description', sql.NVarChar(sql.MAX), toText(description))
+      .input('missions', sql.NVarChar(sql.MAX), toText(missions))
+      .input('responsibilities', sql.NVarChar(sql.MAX), toText(responsibilities))
       .input('required_skills_json', sql.NVarChar(sql.MAX), JSON.stringify(required_skills || []))
-      .input('desired_profile', sql.NVarChar(sql.MAX), desired_profile || '')
+      .input('desired_profile', sql.NVarChar(sql.MAX), toText(desired_profile))
       .input('recommended_questions_json', sql.NVarChar(sql.MAX), JSON.stringify(recommended_questions || []))
       .input('status', sql.NVarChar, status || 'draft')
       .input('created_by', sql.Int, req.user.id)
@@ -115,12 +128,12 @@ exports.updateOffer = async (req, res) => {
       .input('title', sql.NVarChar, title)
       .input('position', sql.NVarChar, position)
       .input('level', sql.NVarChar, level)
-      .input('technologies', sql.NVarChar(sql.MAX), technologies)
-      .input('description', sql.NVarChar(sql.MAX), description)
-      .input('missions', sql.NVarChar(sql.MAX), missions)
-      .input('responsibilities', sql.NVarChar(sql.MAX), responsibilities)
+      .input('technologies', sql.NVarChar(sql.MAX), toText(technologies))
+      .input('description', sql.NVarChar(sql.MAX), toText(description))
+      .input('missions', sql.NVarChar(sql.MAX), toText(missions))
+      .input('responsibilities', sql.NVarChar(sql.MAX), toText(responsibilities))
       .input('required_skills_json', sql.NVarChar(sql.MAX), JSON.stringify(required_skills || []))
-      .input('desired_profile', sql.NVarChar(sql.MAX), desired_profile)
+      .input('desired_profile', sql.NVarChar(sql.MAX), toText(desired_profile))
       .input('recommended_questions_json', sql.NVarChar(sql.MAX), JSON.stringify(recommended_questions || []))
       .input('status', sql.NVarChar, status)
       .input('updated_at', sql.DateTime, new Date())

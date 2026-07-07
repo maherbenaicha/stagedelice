@@ -7,6 +7,17 @@ const {
   generateDashboardInsights,
 } = require('../services/geminiService');
 
+/**
+ * L'IA (Groq) peut renvoyer un champ texte sous forme de tableau au lieu
+ * d'une chaîne (ex: recommendation: ["...", "..."]), ce qui casse
+ * l'insertion SQL (NVarChar attend une string). On normalise toujours.
+ */
+function toText(value) {
+  if (Array.isArray(value)) return value.join('\n');
+  if (value === null || value === undefined) return '';
+  return String(value);
+}
+
 async function getJobOffer(pool, id) {
   const result = await pool.request()
     .input('id', sql.Int, id)
@@ -37,9 +48,9 @@ exports.uploadAndAnalyzeCVs = async (req, res) => {
         }
 
         const extracted = await extractCVData(cvText);
-        const fullName = extracted.full_name || file.originalname.replace('.pdf', '');
-        const email = extracted.email || null;
-        const phone = extracted.phone || null;
+        const fullName = toText(extracted.full_name) || file.originalname.replace('.pdf', '');
+        const email = extracted.email ? toText(extracted.email) : null;
+        const phone = extracted.phone ? toText(extracted.phone) : null;
 
         const candidateResult = await pool.request()
           .input('full_name', sql.NVarChar, fullName)
@@ -73,10 +84,10 @@ exports.uploadAndAnalyzeCVs = async (req, res) => {
           .input('job_offer_id', sql.Int, jobOfferId)
           .input('candidate_id', sql.Int, candidateId)
           .input('cv_id', sql.Int, cvId)
-          .input('ai_profile_summary', sql.NVarChar(sql.MAX), summary.profile_summary || '')
+          .input('ai_profile_summary', sql.NVarChar(sql.MAX), toText(summary.profile_summary))
           .input('ai_strengths_json', sql.NVarChar(sql.MAX), JSON.stringify(summary.strengths || []))
           .input('ai_weaknesses_json', sql.NVarChar(sql.MAX), JSON.stringify(summary.weaknesses || []))
-          .input('ai_recommendation', sql.NVarChar, summary.recommendation || '')
+          .input('ai_recommendation', sql.NVarChar, toText(summary.recommendation))
           .query(`INSERT INTO CandidateApplications (job_offer_id, candidate_id, cv_id,
                   ai_profile_summary, ai_strengths_json, ai_weaknesses_json, ai_recommendation)
                   OUTPUT INSERTED.id VALUES (@job_offer_id, @candidate_id, @cv_id,
@@ -93,7 +104,7 @@ exports.uploadAndAnalyzeCVs = async (req, res) => {
           .input('score_languages', sql.Int, score.score_languages || 0)
           .input('strengths_json', sql.NVarChar(sql.MAX), JSON.stringify(score.strengths || []))
           .input('missing_skills_json', sql.NVarChar(sql.MAX), JSON.stringify(score.missing_skills || []))
-          .input('explanation', sql.NVarChar(sql.MAX), score.explanation || '')
+          .input('explanation', sql.NVarChar(sql.MAX), toText(score.explanation))
           .query(`INSERT INTO CandidateCompatibilityScores (application_id, score_global, score_technical,
                   score_experience, score_education, score_certifications, score_languages,
                   strengths_json, missing_skills_json, explanation)
