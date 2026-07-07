@@ -37,3 +37,6 @@ Thumbs.db
 # Misc
 *.local
 .cache/
+
+# Uploaded CV files
+backend/uploads/

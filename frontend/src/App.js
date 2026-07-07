@@ -15,6 +15,11 @@ import CandidateTest from './pages/CandidateTest';
 import TestResult from './pages/TestResult';
 import HomePage from './pages/HomePage';
 import Layout from './components/layout/Layout';
+import TalentDashboardPage from './pages/TalentDashboardPage';
+import JobOffersPage from './pages/JobOffersPage';
+import JobOfferDetailPage from './pages/JobOfferDetailPage';
+import TalentCandidatesPage from './pages/TalentCandidatesPage';
+import TalentCandidateDetailPage from './pages/TalentCandidateDetailPage';
 import './styles/global.css';
 
 const PrivateRoute = ({ children }) => {
@@ -40,6 +45,11 @@ function App() {
             <Route path="tests/:id" element={<TestDetailPage />} />
             <Route path="candidates" element={<CandidatesPage />} />
             <Route path="candidates/:id" element={<SessionDetailPage />} />
+            <Route path="talent" element={<TalentDashboardPage />} />
+            <Route path="talent/offers" element={<JobOffersPage />} />
+            <Route path="talent/offers/:id" element={<JobOfferDetailPage />} />
+            <Route path="talent/candidates" element={<TalentCandidatesPage />} />
+            <Route path="talent/candidates/:id" element={<TalentCandidateDetailPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>

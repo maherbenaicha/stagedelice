@@ -5,8 +5,11 @@ import './Layout.css';
 
 const navItems = [
   { to: '/dashboard', icon: '📊', label: 'Tableau de bord' },
+  { to: '/dashboard/talent', icon: '🤖', label: 'Dashboard IA' },
+  { to: '/dashboard/talent/offers', icon: '📋', label: 'Offres IA' },
+  { to: '/dashboard/talent/candidates', icon: '🎯', label: 'Talent AI' },
   { to: '/dashboard/tests', icon: '📝', label: 'Tests' },
-  { to: '/dashboard/candidates', icon: '👥', label: 'Candidats' },
+  { to: '/dashboard/candidates', icon: '👥', label: 'Candidats tests' },
   { to: '/dashboard/users', icon: '⚙️', label: 'Utilisateurs', adminOnly: true },
   { to: '/dashboard/profile', icon: '👤', label: 'Mon profil' },
 ];
