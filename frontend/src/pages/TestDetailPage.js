@@ -68,6 +68,35 @@ export default function TestDetailPage() {
     load();
   };
 
+  const candidateLink = `${window.location.origin}/test/${test?.access_code}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(candidateLink);
+      toast.success('Lien copié dans le presse-papiers');
+    } catch {
+      toast.error('Impossible de copier le lien');
+    }
+  };
+
+  const handleSendByEmail = () => {
+    const subject = `Invitation au test technique : ${test.title}`;
+    const body = [
+      `Bonjour,`,
+      ``,
+      `Vous êtes invité(e) à passer le test technique "${test.title}".`,
+      `Durée : ${test.duration_minutes} minutes.`,
+      ``,
+      `Deux façons d'y accéder :`,
+      `1. Lien direct : ${candidateLink}`,
+      `2. Ou rendez-vous sur ${window.location.origin}/test et saisissez le code : ${test.access_code}`,
+      ``,
+      `Cordialement,`,
+      `L'équipe RH`,
+    ].join('\n');
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   if (!test) return <div style={{ padding:'32px' }}>Chargement...</div>;
 
   return (
@@ -83,6 +112,14 @@ export default function TestDetailPage() {
             <span>⏱ {test.duration_minutes} min</span>
             <span>🎯 Seuil: {test.passing_score}%</span>
             <span style={{ background:'#e5eefb', color:'#0b3fa6', padding:'2px 10px', borderRadius:'20px', fontWeight:'600' }}>Code: {test.access_code}</span>
+            <button onClick={handleCopyLink}
+              style={{ padding:'2px 12px', background:'#f7fbff', border:'1px solid #dce9fb', borderRadius:'20px', cursor:'pointer', fontWeight:'500', fontSize:'0.85rem', color:'#0b3fa6' }}>
+              🔗 Copier le lien candidat
+            </button>
+            <button onClick={handleSendByEmail}
+              style={{ padding:'2px 12px', background:'#f7fbff', border:'1px solid #dce9fb', borderRadius:'20px', cursor:'pointer', fontWeight:'500', fontSize:'0.85rem', color:'#0b3fa6' }}>
+              ✉️ Envoyer par email
+            </button>
           </div>
         </div>
         <div style={{ display:'flex', gap:'12px' }}>

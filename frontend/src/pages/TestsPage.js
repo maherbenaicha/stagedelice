@@ -32,6 +32,15 @@ export default function TestsPage() {
     load();
   };
 
+  const handleCopyLink = async (code) => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/test/${code}`);
+      toast.success('Lien candidat copié');
+    } catch {
+      toast.error('Impossible de copier le lien');
+    }
+  };
+
   const getDiffColor = (cat) => {
     const colors = { SQL:'#3b82f6', Web:'#10b981', Réseau:'#f59e0b', Algorithmique:'#8b5cf6', ERP:'#ef4444' };
     return colors[cat] || '#5f7faf';
@@ -75,6 +84,11 @@ export default function TestsPage() {
               <button onClick={() => navigate(`/dashboard/tests/${t.id}`)}
                 style={{ flex:1, padding:'8px', background:'#0b3fa6', color:'white', border:'none', borderRadius:'6px', cursor:'pointer', fontWeight:'500' }}>
                 Gérer
+              </button>
+              <button onClick={() => handleCopyLink(t.access_code)}
+                style={{ padding:'8px 14px', background:'#eef5ff', color:'#0b3fa6', border:'none', borderRadius:'6px', cursor:'pointer' }}
+                title="Copier le lien candidat">
+                🔗
               </button>
               <button onClick={() => handleDelete(t.id)}
                 style={{ padding:'8px 14px', background:'#fee2e2', color:'#ef4444', border:'none', borderRadius:'6px', cursor:'pointer' }}>

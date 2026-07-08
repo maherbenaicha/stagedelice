@@ -75,6 +75,7 @@ export default function HomePage() {
             </p>
             <div className="hero-actions">
               <a href="#produits" className="primary-btn">Découvrir</a>
+              <Link to="/test" className="secondary-btn">J'ai un code de test technique</Link>
               <Link to="/login" className="secondary-btn">Accéder à l’espace admin</Link>
             </div>
             <div className="highlight-row">
