@@ -64,6 +64,17 @@ export default function JobOfferDetailPage() {
     }
   };
 
+  const togglePublish = async () => {
+    const newStatus = offer.status === 'published' ? 'draft' : 'published';
+    try {
+      await api.put(`/job-offers/${id}`, { ...offer, status: newStatus });
+      toast.success(newStatus === 'published' ? 'Offre publiée' : 'Offre repassée en brouillon');
+      load();
+    } catch {
+      toast.error('Erreur changement de statut');
+    }
+  };
+
   if (!offer) return <div style={{ padding: '32px' }}>Chargement...</div>;
 
   return (
@@ -72,8 +83,19 @@ export default function JobOfferDetailPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '24px' }}>
         <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '8px' }}>{offer.title}</h1>
-          <p style={{ color: '#5f7faf', marginBottom: '16px' }}>{offer.position} — {offer.level}</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '8px' }}>{offer.title}</h1>
+              <p style={{ color: '#5f7faf', marginBottom: '16px' }}>{offer.position} — {offer.level}</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', background: offer.status === 'published' ? '#dcfce7' : '#e5eefb', color: offer.status === 'published' ? '#16a34a' : '#0b3fa6' }}>{offer.status}</span>
+              <br />
+              <button onClick={togglePublish} style={{ marginTop: '8px', padding: '6px 14px', background: offer.status === 'published' ? '#e5eefb' : '#10b981', color: offer.status === 'published' ? '#0b3fa6' : 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                {offer.status === 'published' ? 'Repasser en brouillon' : '✅ Publier'}
+              </button>
+            </div>
+          </div>
           <p style={{ marginBottom: '12px' }}><strong>Technologies :</strong> {offer.technologies}</p>
           <p style={{ marginBottom: '12px', whiteSpace: 'pre-wrap' }}>{offer.description}</p>
           <p style={{ marginBottom: '12px', whiteSpace: 'pre-wrap' }}><strong>Missions :</strong><br />{offer.missions}</p>

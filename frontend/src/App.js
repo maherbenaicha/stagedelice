@@ -10,6 +10,7 @@ import CandidatesPage from './pages/CandidatesPage';
 import SessionDetailPage from './pages/SessionDetailPage';
 import UsersPage from './pages/UsersPage';
 import ProfilePage from './pages/ProfilePage';
+import CandidateAccessPage from './pages/CandidateAccessPage';
 import CandidatePortal from './pages/CandidatePortal';
 import CandidateTest from './pages/CandidateTest';
 import TestResult from './pages/TestResult';
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/test" element={<CandidateAccessPage />} />
           <Route path="/test/:code" element={<CandidatePortal />} />
           <Route path="/test/:code/start" element={<CandidateTest />} />
           <Route path="/test/result/:sessionId" element={<TestResult />} />

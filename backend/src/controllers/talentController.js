@@ -218,10 +218,15 @@ exports.getApplication = async (req, res) => {
     const result = await pool.request()
       .input('id', sql.Int, req.params.id)
       .query(`
-        SELECT ca.*, c.full_name, c.email, c.phone,
+        SELECT ca.id, ca.job_offer_id, ca.candidate_id, ca.cv_id, ca.status,
+               ca.ai_profile_summary, ca.ai_strengths_json, ca.ai_weaknesses_json,
+               ca.ai_recommendation, ca.created_at, ca.updated_at,
+               c.full_name, c.email, c.phone,
                jo.title AS job_title, jo.position, jo.level,
                cv.file_name, cv.file_path,
-               ccs.*,
+               ccs.score_global, ccs.score_technical, ccs.score_experience, ccs.score_education,
+               ccs.score_certifications, ccs.score_languages,
+               ccs.strengths_json, ccs.missing_skills_json, ccs.explanation,
                cce.extracted_json
         FROM CandidateApplications ca
         JOIN Candidates c ON ca.candidate_id = c.id

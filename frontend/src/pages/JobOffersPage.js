@@ -27,14 +27,19 @@ export default function JobOffersPage() {
         position: form.position, level: form.level, technologies: form.technologies,
       });
       const g = r.data.generated;
+      // L'IA renvoie parfois ces champs sous forme de tableau au lieu
+      // d'une chaîne : on normalise toujours en texte pour l'affichage
+      // dans les <textarea> et pour éviter une erreur SQL au moment
+      // d'enregistrer l'offre.
+      const asText = (v) => (Array.isArray(v) ? v.join('\n') : (v || ''));
       setForm(f => ({
         ...f,
         title: g.title || f.title,
-        description: g.description || '',
-        missions: g.missions || '',
-        responsibilities: g.responsibilities || '',
+        description: asText(g.description),
+        missions: asText(g.missions),
+        responsibilities: asText(g.responsibilities),
         required_skills: g.required_skills || [],
-        desired_profile: g.desired_profile || '',
+        desired_profile: asText(g.desired_profile),
         recommended_questions: g.recommended_questions || [],
       }));
       toast.success('Offre générée par l\'IA — modifiez avant publication');
@@ -45,12 +50,13 @@ export default function JobOffersPage() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (publish = false) => {
     if (!form.title || !form.position) return toast.error('Titre et poste requis');
     setSaving(true);
     try {
-      const r = await api.post('/job-offers', form);
-      toast.success('Offre créée avec pipeline IA');
+      const payload = { ...form, status: publish ? 'published' : 'draft' };
+      const r = await api.post('/job-offers', payload);
+      toast.success(publish ? 'Offre publiée avec pipeline IA' : 'Offre enregistrée en brouillon');
       setShowForm(false);
       navigate(`/dashboard/talent/offers/${r.data.id}`);
     } catch (e) {
@@ -111,8 +117,11 @@ export default function JobOffersPage() {
               <label style={{ fontSize: '0.85rem', color: '#5f7faf' }}>Profil recherché</label>
               <textarea style={{ ...inputStyle, minHeight: '60px' }} value={form.desired_profile} onChange={e => setForm(f => ({ ...f, desired_profile: e.target.value }))} />
               <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                <button onClick={handleSave} disabled={saving} style={{ padding: '10px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-                  {saving ? 'Enregistrement...' : 'Publier l\'offre'}
+                <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '10px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+                  {saving ? 'Enregistrement...' : '✅ Publier l\'offre'}
+                </button>
+                <button onClick={() => handleSave(false)} disabled={saving} style={{ padding: '10px 20px', background: '#e5eefb', color: '#0b3fa6', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+                  Enregistrer en brouillon
                 </button>
                 <button onClick={() => setShowForm(false)} style={{ padding: '10px 20px', background: '#e5eefb', color: '#0b3fa6', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Annuler</button>
               </div>

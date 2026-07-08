@@ -1,15 +1,45 @@
 -- =====================================================
--- StageDélice — Données de test : Tests techniques + Sessions candidats
--- Remplit : 5 nouveaux tests multi-domaines (SQL, Réseau, Java, React, ERP)
--- + questions cohérentes + sessions de candidats ayant passé le test
--- CORRESPONDANT à leur domaine, avec scores/statuts réalistes.
--- Prérequis : avoir déjà exécuté init-db.sql (Users + Test JS existant).
--- Usage : sqlcmd -S <server> -U sa -P <pwd> -d TechTestDB -i seed-tests-sessions-data.sql
+-- StageDélice — Script AUTONOME de remplissage complet
+-- Crée (si absents) : admin/RH + 6 tests + questions + ~23 sessions candidats
+-- Peut être exécuté seul dans SSMS, même sur une base TechTestDB vide
+-- (à condition que les tables existent déjà, cf. init-db.sql)
 -- =====================================================
 
 USE TechTestDB;
 GO
 
+-- 1) Utilisateurs par défaut (si absents)
+IF NOT EXISTS (SELECT * FROM Users WHERE email = 'admin@stagedelice.com')
+BEGIN
+    INSERT INTO Users (full_name, email, password_hash, role)
+    VALUES (N'Administrateur', 'admin@stagedelice.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+END
+GO
+IF NOT EXISTS (SELECT * FROM Users WHERE email = 'rh@stagedelice.com')
+BEGIN
+    INSERT INTO Users (full_name, email, password_hash, role)
+    VALUES (N'Responsable RH', 'rh@stagedelice.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'rh');
+END
+GO
+
+-- 2) Test JavaScript (si absent) — identique à init-db.sql
+IF NOT EXISTS (SELECT * FROM Tests WHERE access_code = 'JS2024')
+BEGIN
+    DECLARE @AdminId0 INT = (SELECT TOP 1 id FROM Users WHERE role='admin' ORDER BY id);
+    DECLARE @JSTestId INT;
+    INSERT INTO Tests (title, description, category, duration_minutes, passing_score, access_code, created_by)
+    VALUES (N'Test JavaScript - Niveau Intermediaire', N'Évaluation des connaissances JavaScript pour développeurs web', 'JavaScript', 30, 60, 'JS2024', @AdminId0);
+    SET @JSTestId = SCOPE_IDENTITY();
+    INSERT INTO Questions (test_id, text, options, correct_answer, difficulty, points, position) VALUES
+    (@JSTestId, N'Quelle methode permet d''ajouter un element a la fin d''un tableau ?', N'["push()","pop()","shift()","unshift()"]', 0, 'facile', 1, 1),
+    (@JSTestId, N'Que retourne typeof null ?', N'["\"null\"","\"object\"","\"undefined\"","\"number\""]', 1, 'moyen', 2, 2),
+    (@JSTestId, N'Quel mot-cle declare une variable dont la reference ne peut pas etre reassignee ?', N'["var","let","const","static"]', 2, 'facile', 1, 3),
+    (@JSTestId, N'Quelle methode sert a transformer chaque element d''un tableau ?', N'["forEach()","map()","filter()","reduce()"]', 1, 'moyen', 2, 4),
+    (@JSTestId, N'Que fait Promise.all() ?', N'["Resout des la premiere promesse", "Rejette toutes les promesses", "Attend que toutes les promesses soient resolues", "Annule les promesses en attente"]', 2, 'difficile', 3, 5);
+END
+GO
+
+-- 3) Déclaration de @adminId pour les tests suivants
 DECLARE @adminId INT = (SELECT TOP 1 id FROM Users WHERE role='admin' ORDER BY id);
 IF @adminId IS NULL SET @adminId = (SELECT TOP 1 id FROM Users ORDER BY id);
 
