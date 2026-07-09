@@ -289,6 +289,35 @@ Format :
   return callGroqJSON(prompt, { temperature: 0.5 });
 }
 
+/**
+ * Assistant conversationnel contextuel pour la RH.
+ * `context` est un instantané des données actuelles de la plateforme
+ * (tests, sessions, candidats, offres, candidatures) construit par
+ * aiController.chat — le modèle ne doit répondre qu'à partir de ces
+ * données, jamais en inventer.
+ */
+async function chatWithAssistant({ message, history = [], context }) {
+  const historyText = history
+    .slice(-6)
+    .map((h) => `${h.role === 'user' ? 'RH' : 'Assistant'}: ${h.content}`)
+    .join('\n');
+
+  const prompt = `Tu es l'assistant IA intégré à StageDélice, une plateforme de recrutement technique (tests QCM + module Talent/CV). Tu aides un(e) membre des Ressources Humaines à interpréter les données de la plateforme.
+
+Instantané des données actuelles de la plateforme (JSON) :
+${JSON.stringify(context, null, 2)}
+
+Règles STRICTES :
+- Réponds en français, de façon concise et actionnable (quelques phrases ou une courte liste à puces).
+- Base-toi UNIQUEMENT sur les données fournies ci-dessus. Si l'information demandée n'y figure pas, dis-le clairement et indique dans quelle page de la plateforme la RH peut la trouver (Tests, Candidats, Talent, Offres, Rapports...), sans jamais inventer de chiffre.
+- Ne donne aucun conseil ou commentaire pouvant être discriminatoire (âge, genre, origine, religion, situation familiale, etc.) : reste centré sur les compétences et l'adéquation au poste.
+- Pas de préambule du type "Voici ma réponse" : réponds directement à la question.
+${historyText ? `\nHistorique récent de la conversation :\n${historyText}\n` : ''}
+Question de la RH : ${message}`;
+
+  return callGroq(prompt, { temperature: 0.3, max_tokens: 700 });
+}
+
 module.exports = {
   generateQuestions,
   extractCVData,
@@ -298,4 +327,5 @@ module.exports = {
   generateRecruitmentPipeline,
   generatePersonalizedEmail,
   generateDashboardInsights,
+  chatWithAssistant,
 };

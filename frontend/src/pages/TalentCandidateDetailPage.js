@@ -1,3 +1,4 @@
+import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -53,7 +54,7 @@ export default function TalentCandidateDetailPage() {
 
   return (
     <div style={{ padding: '32px' }}>
-      <button onClick={() => navigate('/dashboard/talent/candidates')} style={{ marginBottom: '16px', background: 'none', border: 'none', color: '#0b3fa6', cursor: 'pointer' }}>← Retour</button>
+      <button onClick={() => navigate('/dashboard/talent/candidates')} style={{ marginBottom: '16px', background: 'none', border: 'none', color: '#0b3fa6', cursor: 'pointer' }}><ChevronLeft size={16} style={{ display:'inline', verticalAlign:'middle' }} /> Retour</button>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         <div>
@@ -73,10 +74,10 @@ export default function TalentCandidateDetailPage() {
             </div>
 
             <h3 style={{ fontWeight: '600', marginTop: '16px', color: '#16a34a' }}>Points forts</h3>
-            <ul>{(app.ai_strengths || []).map((s, i) => <li key={i}>✔ {s}</li>)}</ul>
+            <ul>{(app.ai_strengths || []).map((s, i) => <li key={i}><CheckCircle2 size={14} style={{ display:"inline", verticalAlign:"middle", color:"#16a34a", marginRight:"4px" }} />{s}</li>)}</ul>
 
             <h3 style={{ fontWeight: '600', marginTop: '8px', color: '#dc2626' }}>Points faibles</h3>
-            <ul>{(app.ai_weaknesses || []).map((w, i) => <li key={i}>⚠ {w}</li>)}</ul>
+            <ul>{(app.ai_weaknesses || []).map((w, i) => <li key={i}><AlertTriangle size={14} style={{ display:"inline", verticalAlign:"middle", color:"#f59e0b", marginRight:"4px" }} />{w}</li>)}</ul>
 
             <div style={{ marginTop: '16px', padding: '14px', background: '#fef3c7', borderRadius: '8px' }}>
               <strong>Recommandation IA :</strong> {app.ai_recommendation}
@@ -106,12 +107,12 @@ export default function TalentCandidateDetailPage() {
 
             <h3 style={{ fontWeight: '600', marginTop: '16px', color: '#16a34a' }}>Points forts (match)</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {(app.strengths || []).map((s, i) => <span key={i} style={{ color: '#16a34a' }}>✔ {s}</span>)}
+              {(app.strengths || []).map((s, i) => <span key={i} style={{ color: '#16a34a' }}><CheckCircle2 size={14} style={{ display:"inline", verticalAlign:"middle", color:"#16a34a", marginRight:"4px" }} />{s}</span>)}
             </div>
 
             <h3 style={{ fontWeight: '600', marginTop: '12px', color: '#dc2626' }}>Compétences manquantes</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {(app.missing_skills || []).map((s, i) => <span key={i} style={{ color: '#dc2626' }}>❌ {s}</span>)}
+              {(app.missing_skills || []).map((s, i) => <span key={i} style={{ color: '#dc2626' }}><XCircle size={14} style={{ display:"inline", verticalAlign:"middle", color:"#dc2626", marginRight:"4px" }} />{s}</span>)}
             </div>
 
             <p style={{ marginTop: '16px', fontSize: '0.9rem', color: '#5f7faf', fontStyle: 'italic' }}>{app.explanation}</p>

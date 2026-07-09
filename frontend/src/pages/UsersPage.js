@@ -1,3 +1,4 @@
+import { Circle } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
@@ -59,7 +60,7 @@ export default function UsersPage() {
                 </td>
                 <td style={{ padding:'14px 16px' }}>
                   <span style={{ color: u.is_active ? '#10b981' : '#ef4444', fontWeight:'500', fontSize:'0.9rem' }}>
-                    {u.is_active ? '● Actif' : '○ Inactif'}
+                    {u.is_active ? 'Actif' : 'Inactif'}
                   </span>
                 </td>
                 <td style={{ padding:'14px 16px', fontSize:'0.85rem', color:'#5f7faf' }}>

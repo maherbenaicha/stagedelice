@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { CheckCircle2, PartyPopper, Frown } from 'lucide-react';
 
 export default function TestResult() {
   const { sessionId } = useParams();
@@ -13,7 +14,7 @@ export default function TestResult() {
   if (!result) return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#f7fbff' }}>
       <div style={{ textAlign:'center' }}>
-        <div style={{ fontSize:'3rem', marginBottom:'16px' }}>✅</div>
+        <CheckCircle2 size={56} color="#10b981" style={{ margin:'0 auto 16px' }} />
         <h2>Test soumis avec succès</h2>
         <p style={{ color:'#5f7faf', marginTop:'8px' }}>Vos résultats ont été enregistrés.</p>
       </div>
@@ -27,12 +28,17 @@ export default function TestResult() {
   return (
     <div style={{ minHeight:'100vh', background: passed ? 'linear-gradient(135deg,#065f46,#10b981)' : 'linear-gradient(135deg,#7f1d1d,#ef4444)', display:'flex', alignItems:'center', justifyContent:'center', padding:'20px' }}>
       <div style={{ background:'white', borderRadius:'20px', padding:'48px', width:'100%', maxWidth:'500px', textAlign:'center', boxShadow:'0 25px 50px rgba(0,0,0,0.3)' }}>
-        <div style={{ fontSize:'5rem', marginBottom:'16px' }}>{passed ? '🎉' : '😔'}</div>
+        <div style={{ marginBottom:'16px' }}>
+          {passed
+            ? <PartyPopper size={64} color="#16a34a" style={{ margin:'0 auto' }} />
+            : <Frown size={64} color="#dc2626" style={{ margin:'0 auto' }} />
+          }
+        </div>
         <h1 style={{ fontSize:'2rem', fontWeight:'700', color: passed?'#065f46':'#7f1d1d', marginBottom:'8px' }}>
           {passed ? 'Félicitations !' : 'Test non validé'}
         </h1>
         <p style={{ color:'#5f7faf', marginBottom:'32px' }}>
-          {passed ? 'Vous avez réussi ce test technique !' : 'Vous n\'avez pas atteint le score minimum requis.'}
+          {passed ? 'Vous avez réussi ce test technique !' : "Vous n'avez pas atteint le score minimum requis."}
         </p>
 
         <div style={{ background: passed?'#dcfce7':'#fee2e2', borderRadius:'16px', padding:'24px', marginBottom:'24px' }}>

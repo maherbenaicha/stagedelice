@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { XCircle, FlaskConical, AlertTriangle, Play } from 'lucide-react';
 
 export default function CandidatePortal() {
   const { code } = useParams();
@@ -42,7 +43,7 @@ export default function CandidatePortal() {
   if (!test) return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#f7fbff' }}>
       <div style={{ textAlign:'center', padding:'40px' }}>
-        <div style={{ fontSize:'4rem', marginBottom:'16px' }}>❌</div>
+        <XCircle size={64} color="#ef4444" style={{ margin:'0 auto 16px' }} />
         <h2>Test non trouvé</h2>
         <p style={{ color:'#5f7faf' }}>Le code d'accès est invalide ou le test n'est plus disponible.</p>
       </div>
@@ -53,7 +54,7 @@ export default function CandidatePortal() {
     <div style={{ minHeight:'100vh', background:'linear-gradient(135deg,#0842aa 0%,#0b3fa6 100%)', display:'flex', alignItems:'center', justifyContent:'center', padding:'20px' }}>
       <div style={{ background:'white', borderRadius:'16px', padding:'48px', width:'100%', maxWidth:'520px', boxShadow:'0 25px 50px rgba(0,0,0,0.3)' }}>
         <div style={{ textAlign:'center', marginBottom:'32px' }}>
-          <div style={{ fontSize:'2.5rem', marginBottom:'12px' }}>🧪</div>
+          <FlaskConical size={48} color="#0b3fa6" style={{ margin:'0 auto 12px' }} />
           <h1 style={{ fontSize:'1.5rem', fontWeight:'700', color:'#0b2d63' }}>{test.title}</h1>
           {test.description && <p style={{ color:'#5f7faf', marginTop:'8px', fontSize:'0.95rem' }}>{test.description}</p>}
           <div style={{ display:'flex', justifyContent:'center', gap:'24px', marginTop:'16px' }}>
@@ -68,8 +69,9 @@ export default function CandidatePortal() {
           </div>
         </div>
 
-        <div style={{ background:'#fef3c7', borderRadius:'8px', padding:'12px 16px', marginBottom:'24px', fontSize:'0.85rem', color:'#92400e' }}>
-          ⚠️ Une fois démarré, le test ne peut pas être mis en pause. Assurez-vous d'avoir {test.duration_minutes} minutes disponibles.
+        <div style={{ display:'flex', alignItems:'flex-start', gap:'10px', background:'#fef3c7', borderRadius:'8px', padding:'12px 16px', marginBottom:'24px', fontSize:'0.85rem', color:'#92400e' }}>
+          <AlertTriangle size={16} style={{ flexShrink:0, marginTop:'1px' }} />
+          Une fois démarré, le test ne peut pas être mis en pause. Assurez-vous d'avoir {test.duration_minutes} minutes disponibles.
         </div>
 
         <form onSubmit={handleStart}>
@@ -82,8 +84,9 @@ export default function CandidatePortal() {
             </div>
           ))}
           <button type="submit" disabled={submitting}
-            style={{ width:'100%', padding:'14px', background:'#0b3fa6', color:'white', border:'none', borderRadius:'8px', fontSize:'1rem', fontWeight:'700', cursor:'pointer', marginTop:'8px' }}>
-            {submitting ? 'Démarrage...' : '🚀 Démarrer le test'}
+            style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', width:'100%', padding:'14px', background:'#0b3fa6', color:'white', border:'none', borderRadius:'8px', fontSize:'1rem', fontWeight:'700', cursor:'pointer', marginTop:'8px' }}>
+            <Play size={18} />
+            {submitting ? 'Démarrage...' : 'Démarrer le test'}
           </button>
         </form>
       </div>

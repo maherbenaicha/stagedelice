@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { Timer, AlertTriangle, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 
 export default function CandidateTest() {
   const navigate = useNavigate();
@@ -58,16 +59,16 @@ export default function CandidateTest() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#f7fbff' }}>
-      {/* Header */}
       <div style={{ background:'white', borderBottom:'1px solid #dce9fb', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center', position:'sticky', top:0, zIndex:100 }}>
         <div>
           <div style={{ fontWeight:'700', fontSize:'1.1rem' }}>{sessionData.test?.title}</div>
           <div style={{ fontSize:'0.85rem', color:'#5f7faf' }}>{answeredCount}/{questions.length} réponses</div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
-          <div style={{ background: isUrgent ? '#fee2e2' : '#e5eefb', color: isUrgent ? '#ef4444' : '#0b3fa6',
+          <div style={{ display:'flex', alignItems:'center', gap:'6px', background: isUrgent ? '#fee2e2' : '#e5eefb', color: isUrgent ? '#ef4444' : '#0b3fa6',
             padding:'8px 20px', borderRadius:'8px', fontWeight:'700', fontSize:'1.2rem', fontVariantNumeric:'tabular-nums' }}>
-            {isUrgent ? '⚠️ ' : '⏱ '}{mins}:{secs.toString().padStart(2,'0')}
+            {isUrgent ? <AlertTriangle size={18} /> : <Timer size={18} />}
+            {mins}:{secs.toString().padStart(2,'0')}
           </div>
           <button onClick={() => { if(window.confirm('Soumettre le test maintenant ?')) handleSubmit(); }}
             disabled={submitting}
@@ -78,12 +79,10 @@ export default function CandidateTest() {
       </div>
 
       <div style={{ maxWidth:'800px', margin:'0 auto', padding:'32px 20px' }}>
-        {/* Progress */}
         <div style={{ background:'#dce9fb', borderRadius:'8px', height:'6px', marginBottom:'24px' }}>
           <div style={{ background:'#0b3fa6', borderRadius:'8px', height:'6px', width:`${(currentIdx+1)/questions.length*100}%`, transition:'width 0.3s' }} />
         </div>
 
-        {/* Question */}
         {q && (
           <div style={{ background:'white', borderRadius:'16px', padding:'32px', boxShadow:'0 1px 3px rgba(0,0,0,0.1)', marginBottom:'24px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'20px' }}>
@@ -109,11 +108,10 @@ export default function CandidateTest() {
           </div>
         )}
 
-        {/* Navigation */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <button onClick={() => setCurrentIdx(i => Math.max(0, i-1))} disabled={currentIdx===0}
-            style={{ padding:'10px 24px', background:'white', border:'1px solid #dce9fb', borderRadius:'8px', cursor:'pointer', fontWeight:'500', color: currentIdx===0?'#c2d7f2':'#374151' }}>
-            ← Précédent
+            style={{ display:'flex', alignItems:'center', gap:'6px', padding:'10px 24px', background:'white', border:'1px solid #dce9fb', borderRadius:'8px', cursor:'pointer', fontWeight:'500', color: currentIdx===0?'#c2d7f2':'#374151' }}>
+            <ChevronLeft size={16} /> Précédent
           </button>
 
           <div style={{ display:'flex', gap:'6px', flexWrap:'wrap', justifyContent:'center', maxWidth:'400px' }}>
@@ -129,13 +127,13 @@ export default function CandidateTest() {
 
           {currentIdx < questions.length - 1 ? (
             <button onClick={() => setCurrentIdx(i => i+1)}
-              style={{ padding:'10px 24px', background:'#0b3fa6', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
-              Suivant →
+              style={{ display:'flex', alignItems:'center', gap:'6px', padding:'10px 24px', background:'#0b3fa6', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
+              Suivant <ChevronRight size={16} />
             </button>
           ) : (
             <button onClick={() => { if(window.confirm('Soumettre le test ?')) handleSubmit(); }}
-              style={{ padding:'10px 24px', background:'#10b981', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700' }}>
-              ✓ Soumettre
+              style={{ display:'flex', alignItems:'center', gap:'6px', padding:'10px 24px', background:'#10b981', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'700' }}>
+              <Check size={16} /> Soumettre
             </button>
           )}
         </div>

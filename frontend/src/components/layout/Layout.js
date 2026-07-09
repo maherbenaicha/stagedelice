@@ -1,17 +1,30 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import {
+  LayoutDashboard,
+  BrainCircuit,
+  Briefcase,
+  Users,
+  ClipboardList,
+  UserCheck,
+  Settings,
+  UserCircle,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import './Layout.css';
 
 const navItems = [
-  { to: '/dashboard', icon: '📊', label: 'Tableau de bord' },
-  { to: '/dashboard/talent', icon: '🤖', label: 'Dashboard IA' },
-  { to: '/dashboard/talent/offers', icon: '📋', label: 'Offres IA' },
-  { to: '/dashboard/talent/candidates', icon: '🎯', label: 'Talent AI' },
-  { to: '/dashboard/tests', icon: '📝', label: 'Tests' },
-  { to: '/dashboard/candidates', icon: '👥', label: 'Candidats tests' },
-  { to: '/dashboard/users', icon: '⚙️', label: 'Utilisateurs', adminOnly: true },
-  { to: '/dashboard/profile', icon: '👤', label: 'Mon profil' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
+  { to: '/dashboard/talent', icon: BrainCircuit, label: 'Dashboard IA' },
+  { to: '/dashboard/talent/offers', icon: Briefcase, label: 'Offres IA' },
+  { to: '/dashboard/talent/candidates', icon: UserCheck, label: 'Talent AI' },
+  { to: '/dashboard/tests', icon: ClipboardList, label: 'Tests' },
+  { to: '/dashboard/candidates', icon: Users, label: 'Candidats tests' },
+  { to: '/dashboard/users', icon: Settings, label: 'Utilisateurs', adminOnly: true },
+  { to: '/dashboard/profile', icon: UserCircle, label: 'Mon profil' },
 ];
 
 export default function Layout() {
@@ -31,16 +44,19 @@ export default function Layout() {
             {!collapsed && <span className="logo-text">Délice RH</span>}
           </div>
           <button className="collapse-btn" onClick={() => setCollapsed(!collapsed)}>
-            {collapsed ? '→' : '←'}
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
         <nav className="sidebar-nav">
-          {visibleItems.map(item => (
-            <NavLink key={item.to} to={item.to} className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <span className="nav-icon">{item.icon}</span>
-              {!collapsed && <span className="nav-label">{item.label}</span>}
-            </NavLink>
-          ))}
+          {visibleItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <NavLink key={item.to} to={item.to} className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+                <span className="nav-icon"><Icon size={18} strokeWidth={1.75} /></span>
+                {!collapsed && <span className="nav-label">{item.label}</span>}
+              </NavLink>
+            );
+          })}
         </nav>
         <div className="sidebar-footer">
           <div className="user-info">
@@ -52,7 +68,9 @@ export default function Layout() {
               </div>
             )}
           </div>
-          <button className="logout-btn" onClick={handleLogout} title="Déconnexion">🚪</button>
+          <button className="logout-btn" onClick={handleLogout} title="Déconnexion">
+            <LogOut size={16} strokeWidth={1.75} />
+          </button>
         </div>
       </aside>
       <main className="main-content">

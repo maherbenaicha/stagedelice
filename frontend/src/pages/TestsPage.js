@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import { Clock, HelpCircle, Users, Link2, Trash2, ClipboardList, Circle } from 'lucide-react';
 
 const CATEGORIES = ['SQL', 'Web', 'Réseau', 'Algorithmique', 'ERP', 'Général', 'DevOps', 'Mobile'];
 
@@ -66,16 +67,17 @@ export default function TestsPage() {
               <span style={{ padding:'4px 12px', borderRadius:'20px', fontSize:'0.8rem', fontWeight:'600', background:`${getDiffColor(t.category)}20`, color:getDiffColor(t.category) }}>
                 {t.category}
               </span>
-              <span style={{ fontSize:'0.8rem', color: t.is_active ? '#10b981' : '#ef4444' }}>
-                {t.is_active ? '● Actif' : '○ Inactif'}
+              <span style={{ display:'flex', alignItems:'center', gap:'4px', fontSize:'0.8rem', color: t.is_active ? '#10b981' : '#ef4444' }}>
+                <Circle size={8} fill={t.is_active ? '#10b981' : '#ef4444'} strokeWidth={0} />
+                {t.is_active ? 'Actif' : 'Inactif'}
               </span>
             </div>
             <h3 style={{ fontSize:'1.1rem', fontWeight:'600', marginBottom:'8px' }}>{t.title}</h3>
             <p style={{ color:'#5f7faf', fontSize:'0.85rem', marginBottom:'16px', minHeight:'40px' }}>{t.description}</p>
             <div style={{ display:'flex', gap:'16px', marginBottom:'16px', fontSize:'0.85rem', color:'#5f7faf' }}>
-              <span>⏱ {t.duration_minutes} min</span>
-              <span>❓ {t.question_count} questions</span>
-              <span>👥 {t.session_count} sessions</span>
+              <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><Clock size={14} /> {t.duration_minutes} min</span>
+              <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><HelpCircle size={14} /> {t.question_count} questions</span>
+              <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><Users size={14} /> {t.session_count} sessions</span>
             </div>
             <div style={{ background:'#f7fbff', borderRadius:'6px', padding:'8px 12px', marginBottom:'16px', fontSize:'0.8rem' }}>
               Code d'accès: <strong style={{ color:'#0b3fa6', letterSpacing:'2px' }}>{t.access_code}</strong>
@@ -86,20 +88,20 @@ export default function TestsPage() {
                 Gérer
               </button>
               <button onClick={() => handleCopyLink(t.access_code)}
-                style={{ padding:'8px 14px', background:'#eef5ff', color:'#0b3fa6', border:'none', borderRadius:'6px', cursor:'pointer' }}
+                style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'8px 14px', background:'#eef5ff', color:'#0b3fa6', border:'none', borderRadius:'6px', cursor:'pointer' }}
                 title="Copier le lien candidat">
-                🔗
+                <Link2 size={16} />
               </button>
               <button onClick={() => handleDelete(t.id)}
-                style={{ padding:'8px 14px', background:'#fee2e2', color:'#ef4444', border:'none', borderRadius:'6px', cursor:'pointer' }}>
-                🗑
+                style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'8px 14px', background:'#fee2e2', color:'#ef4444', border:'none', borderRadius:'6px', cursor:'pointer' }}>
+                <Trash2 size={16} />
               </button>
             </div>
           </div>
         ))}
         {tests.length === 0 && (
           <div style={{ gridColumn:'1/-1', textAlign:'center', padding:'60px', color:'#5f7faf' }}>
-            <div style={{ fontSize:'3rem', marginBottom:'12px' }}>📝</div>
+            <div style={{ marginBottom:'12px', opacity:0.4 }}><ClipboardList size={48} strokeWidth={1} style={{ margin:'0 auto' }} /></div>
             <p>Aucun test créé. Créez votre premier test !</p>
           </div>
         )}

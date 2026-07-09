@@ -1,3 +1,4 @@
+import { ChevronLeft, BrainCircuit, CheckCircle } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -79,7 +80,7 @@ export default function JobOfferDetailPage() {
 
   return (
     <div style={{ padding: '32px' }}>
-      <button onClick={() => navigate('/dashboard/talent/offers')} style={{ marginBottom: '16px', background: 'none', border: 'none', color: '#0b3fa6', cursor: 'pointer' }}>← Retour aux offres</button>
+      <button onClick={() => navigate('/dashboard/talent/offers')} style={{ marginBottom: '16px', background: 'none', border: 'none', color: '#0b3fa6', cursor: 'pointer' }}><ChevronLeft size={16} style={{ display:'inline', verticalAlign:'middle' }} /> Retour aux offres</button>
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '24px' }}>
         <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -92,7 +93,7 @@ export default function JobOfferDetailPage() {
               <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', background: offer.status === 'published' ? '#dcfce7' : '#e5eefb', color: offer.status === 'published' ? '#16a34a' : '#0b3fa6' }}>{offer.status}</span>
               <br />
               <button onClick={togglePublish} style={{ marginTop: '8px', padding: '6px 14px', background: offer.status === 'published' ? '#e5eefb' : '#10b981', color: offer.status === 'published' ? '#0b3fa6' : 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>
-                {offer.status === 'published' ? 'Repasser en brouillon' : '✅ Publier'}
+                {offer.status === 'published' ? 'Repasser en brouillon' : 'Publier'}
               </button>
             </div>
           </div>
@@ -118,7 +119,7 @@ export default function JobOfferDetailPage() {
         <h2 style={{ fontWeight: '600', marginBottom: '16px' }}>Importer des CV (PDF)</h2>
         <input type="file" accept=".pdf" multiple onChange={e => setFiles(Array.from(e.target.files))} style={{ marginBottom: '12px' }} />
         <button onClick={handleUpload} disabled={uploading} style={{ padding: '10px 20px', background: '#0b3fa6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-          {uploading ? 'Analyse IA en cours...' : '🤖 Analyser les CV'}
+          {uploading ? 'Analyse IA en cours...' : 'Analyser les CV'}
         </button>
       </div>
 

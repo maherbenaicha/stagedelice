@@ -1,3 +1,4 @@
+import { Clock, Target, Link2, Mail, CheckCircle2, HelpCircle, ChevronLeft } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -102,23 +103,23 @@ export default function TestDetailPage() {
   return (
     <div style={{ padding:'32px' }}>
       <button onClick={() => navigate('/dashboard/tests')} style={{ background:'none', border:'none', cursor:'pointer', color:'#0b3fa6', marginBottom:'16px', fontWeight:'500' }}>
-        ← Retour aux tests
+        <ChevronLeft size={16} style={{ display:'inline', verticalAlign:'middle' }} /> Retour aux tests
       </button>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'24px' }}>
         <div>
           <h1 style={{ fontSize:'1.75rem', fontWeight:'700' }}>{test.title}</h1>
           <p style={{ color:'#5f7faf', marginTop:'4px' }}>{test.description}</p>
           <div style={{ display:'flex', gap:'16px', marginTop:'12px', fontSize:'0.9rem', color:'#5f7faf' }}>
-            <span>⏱ {test.duration_minutes} min</span>
-            <span>🎯 Seuil: {test.passing_score}%</span>
+            <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><Clock size={14} /> {test.duration_minutes} min</span>
+            <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><Target size={14} /> Seuil: {test.passing_score}%</span>
             <span style={{ background:'#e5eefb', color:'#0b3fa6', padding:'2px 10px', borderRadius:'20px', fontWeight:'600' }}>Code: {test.access_code}</span>
             <button onClick={handleCopyLink}
               style={{ padding:'2px 12px', background:'#f7fbff', border:'1px solid #dce9fb', borderRadius:'20px', cursor:'pointer', fontWeight:'500', fontSize:'0.85rem', color:'#0b3fa6' }}>
-              🔗 Copier le lien candidat
+              <Link2 size={13} style={{ display:'inline', verticalAlign:'middle', marginRight:'4px' }} />Copier le lien candidat
             </button>
             <button onClick={handleSendByEmail}
               style={{ padding:'2px 12px', background:'#f7fbff', border:'1px solid #dce9fb', borderRadius:'20px', cursor:'pointer', fontWeight:'500', fontSize:'0.85rem', color:'#0b3fa6' }}>
-              ✉️ Envoyer par email
+              <Mail size={13} style={{ display:'inline', verticalAlign:'middle', marginRight:'4px' }} />Envoyer par email
             </button>
           </div>
         </div>
@@ -158,7 +159,7 @@ export default function TestDetailPage() {
                   border: `1px solid ${idx === q.correct_answer ? '#10b981' : '#dce9fb'}`,
                   color: idx === q.correct_answer ? '#16a34a' : '#374151',
                   fontWeight: idx === q.correct_answer ? '600' : '400' }}>
-                  {idx === q.correct_answer ? '✓ ' : ''}{opt}
+                  {idx === q.correct_answer ? <CheckCircle2 size={13} style={{ display:'inline', verticalAlign:'middle', marginRight:'4px' }} /> : ''}{opt}
                 </div>
               ))}
             </div>
@@ -166,7 +167,7 @@ export default function TestDetailPage() {
         ))}
         {!test.questions?.length && (
           <div style={{ textAlign:'center', padding:'60px', background:'white', borderRadius:'12px', color:'#5f7faf' }}>
-            <div style={{ fontSize:'3rem', marginBottom:'12px' }}>❓</div>
+            <div style={{ marginBottom:'12px', opacity:0.4 }}><HelpCircle size={48} strokeWidth={1} style={{ margin:'0 auto' }} /></div>
             <p>Aucune question. Ajoutez des questions pour ce test.</p>
           </div>
         )}

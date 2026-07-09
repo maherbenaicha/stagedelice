@@ -118,7 +118,7 @@ export default function JobOffersPage() {
               <textarea style={{ ...inputStyle, minHeight: '60px' }} value={form.desired_profile} onChange={e => setForm(f => ({ ...f, desired_profile: e.target.value }))} />
               <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                 <button onClick={() => handleSave(true)} disabled={saving} style={{ padding: '10px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-                  {saving ? 'Enregistrement...' : '✅ Publier l\'offre'}
+                  {saving ? 'Enregistrement...' : "Publier l'offre"}
                 </button>
                 <button onClick={() => handleSave(false)} disabled={saving} style={{ padding: '10px 20px', background: '#e5eefb', color: '#0b3fa6', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
                   Enregistrer en brouillon

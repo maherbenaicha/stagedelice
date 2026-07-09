@@ -5,5 +5,6 @@ const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
 router.post('/generate-questions', ctrl.generate);
+router.post('/chat', ctrl.chat);
 
 module.exports = router;

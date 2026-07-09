@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { ClipboardList, Users, CheckCircle, BarChart2, Download, FileText } from 'lucide-react';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const StatCard = ({ icon, label, value, color }) => (
+const StatCard = ({ icon: Icon, label, value, color }) => (
   <div style={{ background:'white', borderRadius:'12px', padding:'24px', boxShadow:'0 1px 3px rgba(0,0,0,0.1)', borderLeft:`4px solid ${color}` }}>
     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
       <div>
         <p style={{ color:'#5f7faf', fontSize:'0.85rem', marginBottom:'4px' }}>{label}</p>
         <p style={{ fontSize:'2rem', fontWeight:'700', color:'#0b2d63' }}>{value}</p>
       </div>
-      <span style={{ fontSize:'2rem' }}>{icon}</span>
+      <span style={{ color: color, opacity: 0.85 }}><Icon size={32} strokeWidth={1.5} /></span>
     </div>
   </div>
 );
@@ -53,20 +54,20 @@ export default function DashboardPage() {
           <p style={{ color:'#5f7faf' }}>Vue d'ensemble de la plateforme</p>
         </div>
         <div style={{ display:'flex', gap:'12px' }}>
-          <button onClick={() => handleExport('excel')} style={{ padding:'10px 20px', background:'#10b981', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
-            📥 Export Excel
+          <button onClick={() => handleExport('excel')} style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 20px', background:'#10b981', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
+            <Download size={16} /> Export Excel
           </button>
-          <button onClick={() => handleExport('pdf')} style={{ padding:'10px 20px', background:'#ef4444', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
-            📄 Export PDF
+          <button onClick={() => handleExport('pdf')} style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 20px', background:'#ef4444', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'500' }}>
+            <FileText size={16} /> Export PDF
           </button>
         </div>
       </div>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:'20px', marginBottom:'32px' }}>
-        <StatCard icon="📝" label="Tests actifs" value={stats?.total_tests || 0} color="#0b3fa6" />
-        <StatCard icon="👥" label="Sessions complètes" value={stats?.total_sessions || 0} color="#10b981" />
-        <StatCard icon="✅" label="Candidats reçus" value={stats?.total_passed || 0} color="#f59e0b" />
-        <StatCard icon="📊" label="Score moyen" value={`${stats?.avg_score || 0}%`} color="#8b5cf6" />
+        <StatCard icon={ClipboardList} label="Tests actifs" value={stats?.total_tests || 0} color="#0b3fa6" />
+        <StatCard icon={Users} label="Sessions complètes" value={stats?.total_sessions || 0} color="#10b981" />
+        <StatCard icon={CheckCircle} label="Candidats reçus" value={stats?.total_passed || 0} color="#f59e0b" />
+        <StatCard icon={BarChart2} label="Score moyen" value={`${stats?.avg_score || 0}%`} color="#8b5cf6" />
       </div>
 
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px' }}>
