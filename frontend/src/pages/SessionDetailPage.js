@@ -1,4 +1,3 @@
-import { ChevronLeft, CheckCircle2, XCircle } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -13,12 +12,12 @@ export default function SessionDetailPage() {
   if (!session) return <div style={{ padding:'32px' }}>Chargement...</div>;
 
   const formatTime = (s) => `${Math.floor(s/60)}m ${s%60}s`;
-  const passed = session.status === 'reussi';
+  const passed = session.status === 'réussi';
 
   return (
     <div style={{ padding:'32px' }}>
       <button onClick={() => navigate('/candidates')} style={{ background:'none', border:'none', cursor:'pointer', color:'#0b3fa6', marginBottom:'16px', fontWeight:'500' }}>
-        <ChevronLeft size={16} style={{ display:'inline', verticalAlign:'middle' }} /> Retour aux candidats
+        ← Retour aux candidats
       </button>
       <div style={{ background:'white', borderRadius:'16px', padding:'32px', boxShadow:'0 1px 3px rgba(0,0,0,0.1)', marginBottom:'24px' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
@@ -58,7 +57,7 @@ export default function SessionDetailPage() {
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
                   <span style={{ fontWeight:'500', fontSize:'0.9rem' }}>Question #{a.question_id}</span>
                   <span style={{ fontWeight:'600', color: a.is_correct ? '#10b981' : '#ef4444' }}>
-                    {a.is_correct ? `2713 +${a.points} pt(s)` : '2717 0 pt'}
+                    {a.is_correct ? `✓ +${a.points} pt(s)` : '✗ 0 pt'}
                   </span>
                 </div>
                 {!a.is_correct && <div style={{ marginTop:'8px', fontSize:'0.85rem', color:'#5f7faf' }}>
